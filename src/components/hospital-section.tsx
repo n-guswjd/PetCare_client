@@ -35,6 +35,18 @@ function HospitalInfoSection({
   onButtonClick,
 }: HospitalInfoSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopyPhone = async (phone: string) => {
+    try {
+      await navigator.clipboard.writeText(phone);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error("전화번호 복사 실패:", err);
+      alert("전화번호 복사에 실패했습니다.");
+    }
+  };
 
   return (
     <>
@@ -90,12 +102,20 @@ function HospitalInfoSection({
           {isOpen && (
             <div className="mt-4 text-xs flex flex-col gap-3 text-black">
               {hospitalNumber && (
-                <a
-                  href={`tel:${hospitalNumber}`}
-                  className="hover:text-main-1 hover:font-bold cursor-pointer"
-                >
-                  📞 : {hospitalNumber}
-                </a>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleCopyPhone(hospitalNumber)}
+                    className="hover:text-main-1 hover:font-bold cursor-pointer text-left"
+                  >
+                    📞 : {hospitalNumber}
+                  </button>
+                  {isCopied && (
+                    <span className="text-[10px] text-main-1 font-semibold">
+                      복사됨
+                    </span>
+                  )}
+                </div>
               )}
               <p>진료과목 : {departments.join(", ")}</p>
               <p>진료동물 : {breeds.join(", ")}</p>
